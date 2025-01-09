@@ -1,0 +1,46 @@
+#include <linux/module.h>
+#include <linux/kernel.h>
+#include <linux/init.h>
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Your Name");
+MODULE_DESCRIPTION("Kernel module to print prime numbers up to 1000");
+
+/* Прототип функции для проверки простоты числа */
+int is_prime(int num);
+
+/* Функция для проверки, является ли число простым */
+int is_prime(int num) {
+    if (num <= 1) {
+        return 0; // Число не простое
+    }
+    for (int i = 2; i * i <= num; i++) {
+        if (num % i == 0) {
+            return 0; // Число делится на i, значит оно не простое
+        }
+    }
+    return 1; // Число простое
+}
+
+/* Инициализация модуля */
+static int __init prime_numbers_init(void) {
+    int i;
+    printk(KERN_INFO "Loading Prime Numbers Module...\n");
+
+    /* Выводим все простые числа до 1000 */
+    for (i = 2; i < 1000; i++) {
+        if (is_prime(i)) {
+            printk(KERN_INFO "Prime number: %d\n", i);
+        }
+    }
+
+    return 0; // Успешная инициализация
+}
+
+/* Очистка модуля */
+static void __exit prime_numbers_exit(void) {
+    printk(KERN_INFO "Exiting Prime Numbers Module...\n");
+}
+
+module_init(prime_numbers_init);
+module_exit(prime_numbers_exit);
